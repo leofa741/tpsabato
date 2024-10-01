@@ -1,0 +1,235 @@
+﻿@model WebApplication1.Models.CuentaCreacionViewModel
+@{
+    ViewBag.Title = "Cuentas";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Custom styles for a professional look -->
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Gestión Empresarial</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")"><i class='fas fa-home'></i> Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Cuentas", "Cuentas")">Cuentas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCuentas", "Cuentas")">Crear Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("TiposDeCuentas", "Home")">Crear Tipos de Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCategoria", "Categoria")">Crear Categoría</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarCategorias", "Categoria")">Listar Categorías</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarTransacciones", "Transaccion")">Listar Transacciones</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- Mostrar balances de Activos y Pasivos calculados -->
+    @using System.Globalization
+    @* Dentro del código Razor *@
+    @{
+        // Define la cultura para el formato europeo pero con símbolo de dólar
+        var culture = new CultureInfo("es-ES");
+        culture.NumberFormat.CurrencySymbol = "$"; // Cambia el símbolo de moneda a dólar
+        culture.NumberFormat.CurrencyNegativePattern = 1; // -1.233,40 $
+
+        // Formato con separador decimal y de miles adecuado para el formato europeo
+        culture.NumberFormat.CurrencyDecimalSeparator = ",";
+        culture.NumberFormat.CurrencyGroupSeparator = ".";
+        culture.NumberFormat.CurrencyGroupSizes = new[] { 3 };
+
+        decimal totalActivos = 0;
+        decimal totalPasivos = 0;
+
+        foreach (var cuenta in Model.CuentasExistentes)
+        {
+            decimal balance;
+            if (decimal.TryParse(cuenta.Balance, NumberStyles.Any, CultureInfo.InvariantCulture, out balance))
+            {
+                if (balance > 0)
+                {
+                    totalActivos += balance;
+                }
+                else
+                {
+                    totalPasivos += balance;
+                }
+            }
+        }
+    }
+
+    <div class="container mt-5">
+        <h2 class="mb-4"> Cuentas</h2>
+        <div class="row text-center">
+            <div class="col-md-6">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5>Total Activos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@totalActivos.ToString("C", culture)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h5>Total Pasivos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@totalPasivos.ToString("C", culture)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container mt-3">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white text-center">
+                <h3>Cuentas Existentes</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.CuentasExistentes != null && Model.CuentasExistentes.Any())
+                {
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Tipo de Cuenta</th>
+                                <th>Balance</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cuenta in Model.CuentasExistentes)
+                            {
+                                <tr>
+                                    <td>@cuenta.Id</td>
+                                    <td>@cuenta.Nombre</td>
+                                    <td>@cuenta.TipoCuentaNombre (Id N° @cuenta.TipoCuentaId)</td>
+                                    <td>@cuenta.Balance.ToString()</td>
+                                    <td>@cuenta.Descripcion</td>
+                                    <td>
+                                        <!-- Botón de editar -->
+                                        <a href="@Url.Action("EditarCuenta", "Cuentas", new { id = cuenta.Id })" class="btn btn-warning btn-sm">Editar</a>
+
+                                        <!-- Botón de eliminar -->
+                                        <form id="deleteForm-@cuenta.Id" method="post" action="@Url.Action("EliminarCuenta", "Cuentas")" style="display:none;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@cuenta.Id" />
+                                        </form>
+                                        <button class="btn btn-danger btn-sm" onclick="confirmDelete(@cuenta.Id)">Eliminar</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted text-center">No hay cuentas registradas.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        // Mostrar el mensaje de error si la base de datos está caída
+        @if(ViewBag.DatabaseError != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '@ViewBag.DatabaseError',
+                    confirmButtonText: 'OK'
+                });
+            </text>
+        }
+
+        // Función para confirmar la eliminación de una cuenta
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar el formulario para eliminar la cuenta
+                    document.getElementById('deleteForm-' + id).submit();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+﻿@model WebApplication1.Models.CuentaCreacionViewModel
+
+@{
+    ViewBag.Title = "Editar Cuentas";
+
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Custom styles for a professional look -->
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Gestión Empresarial</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")"><i class='fas fa-home'></i> Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Cuentas", "Cuentas")">Cuentas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCuentas", "Cuentas")">Crear Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("TiposDeCuentas", "Home")">Crear Tipos de Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCategoria", "Categoria")">Crear Categoría</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarCategorias", "Categoria")">Listar Categorías</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarTransacciones", "Transaccion")">Listar Transacciones</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Editar Cuentas</h2>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Editar Cuenta</h5>
+                    </div>
+                    <div class="card-body">
+                        @using (Html.BeginForm("EditarCuenta", "Cuentas", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TipoCuentaId, "Tipo de Cuenta", htmlAttributes: new { @class = "form-label" })
+                                @Html.DropDownListFor(model => model.TipoCuentaId, Model.TiposCuentas, "Seleccione un tipo", new { @class = "form-select" })
+                                @Html.ValidationMessageFor(model => model.TipoCuentaId, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Balance, htmlAttributes: new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.Balance, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Balance, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Descripcion, htmlAttributes: new { @class = "form-label" })
+                                @Html.TextBoxFor(model => model.Descripcion, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <a href="@Url.Action("Cuentas", "Cuentas")" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Gestión de Cuentas y Presupuestos";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .banner {
+            position: relative;
+            width: 100%;
+            height: 400px; /* Ajusta la altura según tus necesidades */
+            overflow: hidden;
+        }
+
+        .banner-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+            .banner-slide.active {
+                opacity: 1;
+            }
+
+        .container h2, .container p {
+            color: #000; /* Color de texto para el contenido */
+        }
+
+        .btn-outline-dark {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+            .btn-outline-dark:hover {
+                background-color: #007bff;
+                color: white;
+            }
+    </style>
+</head>
+<body>
+    <main role="main" style="padding-top: 80px;">
+        <!-- Ajusta el padding-top si es necesario -->
+        <div class="banner">
+            <div class="banner-slide active" style="background-image: url('https://images.unsplash.com/photo-1556742400-b5b7c5121f99');">
+                <div class="container">
+                    <h1>Bienvenido a Nuestro Sistema de Gestión de Cuentas</h1>
+                    <p>Facilitamos la gestión financiera con herramientas avanzadas y soporte completo.</p>
+                </div>
+            </div>
+            <div class="banner-slide" style="background-image: url('https://images.unsplash.com/photo-1564869733877-b3d2f74589f3');">
+                <div class="container">
+                    <h1>Descubre Soluciones Financieras Inteligentes</h1>
+                    <p>Optimiza tus recursos con nuestra tecnología líder.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>Control Financiero</h2>
+                    <p>Obtén un control completo sobre las finanzas de tu empresa con nuestras soluciones de contabilidad y gestión de presupuestos en tiempo real.</p>
+                    <p><a class="btn btn-outline-dark" href="#">Descubre más &raquo;</a></p>
+                </div>
+                <div class="col-md-4">
+                    <h2>Planificación de Recursos</h2>
+                    <p>Planifica y gestiona los recursos de tu empresa más eficientemente con herramientas avanzadas diseñadas para maximizar la productividad.</p>
+                    <p><a class="btn btn-outline-dark" href="#">Descubre más &raquo;</a></p>
+                </div>
+                <div class="col-md-4">
+                    <h2>Asesoramiento de Expertos</h2>
+                    <p>Accede a consultoría de expertos para asegurarte de que tus decisiones financieras y estratégicas sean informadas y efectivas.</p>
+                    <p><a class="btn btn-outline-dark" href="#">Descubre más &raquo;</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Banner effect
+        document.addEventListener('DOMContentLoaded', function () {
+            let slides = document.querySelectorAll('.banner-slide');
+            let currentSlide = 0;
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 2000); // Changes every 5 seconds
+        });
+    </script>
+</body>
+</html>

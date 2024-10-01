@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Gestión Empresarial</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")"><i class='fas fa-home'></i> Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Cuentas", "Cuentas")">Cuentas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCuentas", "Cuentas")">Crear Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("TiposDeCuentas", "Home")">Crear Tipos de Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCategoria", "Categoria")">Crear Categoría</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarCategorias", "Categoria")">Listar Categorías</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarTransacciones", "Transaccion")">Listar Transacciones</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Lista de Transacciones</h2>
+
+        <!-- Botón para Crear Nueva Transacción -->
+        <div class="mb-3">
+            <a href="@Url.Action("CrearTransaccion", "Transaccion")" class="btn btn-primary">Crear Transacción</a>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Categoría</th>
+                    <th>Cuenta</th>
+                    <th>Nota</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaccion in Model)
+                {
+                    <tr>
+                        <td>@transaccion.FechaTransaccion.ToShortDateString()</td>
+                        <td>@transaccion.Monto.ToString("C", new System.Globalization.CultureInfo("es-AR"))</td> <!-- Mostrar monto en pesos argentinos -->
+                        <td>@transaccion.CategoriaNombre</td> <!-- Mostrar el nombre de la categoría -->
+                        <td>
+                            <a href="@Url.Action("Cuentas", "Cuentas", new { id = transaccion.CuentasId })">
+                                <i class="fas fa-hand-pointer"></i> @transaccion.CuentasId
+                            </a>
+                        </td>
+                        <td>@transaccion.Nota</td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="@Url.Action("EditarTransaccion", "Transaccion", new { id = transaccion.Id })" class="btn btn-warning btn-sm">Editar</a>
+                                <!-- Botón de eliminar que dispara SweetAlert -->
+                                <form action="@Url.Action("EliminarTransaccion", "Transaccion", new { id = transaccion.Id })" method="post" id="formEliminar_@transaccion.Id" style="display:inline;">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminacion(@transaccion.Id)">Eliminar</button>
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function confirmarEliminacion(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Envía el formulario si el usuario confirma
+                    document.getElementById('formEliminar_' + id).submit();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

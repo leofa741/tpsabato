@@ -1,0 +1,150 @@
+﻿@using PagedList.Mvc;
+@using PagedList;
+@model IPagedList<WebApplication1.Models.Bitacora>
+
+@{
+    ViewBag.Title = "Lista de Bitácora";
+
+    // Determinar la dirección del sorteo para cada columna
+    string fechaSort = ViewBag.CurrentSort == "fecha_asc" ? "fecha_desc" : "fecha_asc";
+    string usuarioSort = ViewBag.CurrentSort == "usuario_asc" ? "usuario_desc" : "usuario_asc";
+    string tipoSort = ViewBag.CurrentSort == "tipo_asc" ? "tipo_desc" : "tipo_asc";
+    string tablaSort = ViewBag.CurrentSort == "tabla_asc" ? "tabla_desc" : "tabla_asc";
+    string registroSort = ViewBag.CurrentSort == "registro_asc" ? "registro_desc" : "registro_asc";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        a {
+            text-decoration: none; /* Quitar subrayado de los enlaces */
+            color: inherit;
+        }
+
+            a:hover {
+                color: #007bff;
+            }
+
+        .sortable {
+            cursor: pointer;
+        }
+
+        .sort-icon {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Lista de Bitácora</h2>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        <a class="sortable" href="@Url.Action("ListarBitacora", new { sortOrder = fechaSort })">
+                            Fecha
+                            @if (ViewBag.CurrentSort == "fecha_asc")
+                            {
+                                <i class="bi bi-arrow-up"></i> <!-- Icono de Bootstrap para ascendente -->
+                            }
+                            else if (ViewBag.CurrentSort == "fecha_desc")
+                            {
+                                <i class="bi bi-arrow-down"></i> <!-- Icono de Bootstrap para descendente -->
+                            }
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sortable" href="@Url.Action("ListarBitacora", new { sortOrder = usuarioSort })">
+                            Usuario ID
+                            @if (ViewBag.CurrentSort == "usuario_asc")
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                            else if (ViewBag.CurrentSort == "usuario_desc")
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sortable" href="@Url.Action("ListarBitacora", new { sortOrder = tipoSort })">
+                            Tipo de Operación
+                            @if (ViewBag.CurrentSort == "tipo_asc")
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                            else if (ViewBag.CurrentSort == "tipo_desc")
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sortable" href="@Url.Action("ListarBitacora", new { sortOrder = tablaSort })">
+                            Tabla Afectada
+                            @if (ViewBag.CurrentSort == "tabla_asc")
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                            else if (ViewBag.CurrentSort == "tabla_desc")
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sortable" href="@Url.Action("ListarBitacora", new { sortOrder = registroSort })">
+                            Registro ID
+                            @if (ViewBag.CurrentSort == "registro_asc")
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                            else if (ViewBag.CurrentSort == "registro_desc")
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                        </a>
+                    </th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var bitacora in Model)
+                {
+                    <tr>
+                        <td>@bitacora.Fecha.ToShortDateString()</td>
+                        <td>@bitacora.UsuarioID</td>
+                        <td>@bitacora.TipoOperacion</td>
+                        <td>@bitacora.TablaAfectada</td>
+                        <td>@bitacora.RegistroID</td>
+                        <td>@bitacora.Detalles</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Controles de paginación -->
+        <div class="pagination-container d-flex justify-content-center mt-4">
+            @Html.PagedListPager(Model, page => Url.Action("ListarBitacora", new { sortOrder = ViewBag.CurrentSort, page }))
+        </div>
+    </div>
+</body>
+</html>

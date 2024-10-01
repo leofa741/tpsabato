@@ -1,0 +1,204 @@
+﻿@model WebApplication1.Models.Transaccion
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Gestión Empresarial</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")"><i class='fas fa-home'></i> Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Cuentas", "Cuentas")">Cuentas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCuentas", "Cuentas")">Crear Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("TiposDeCuentas", "Home")">Crear Tipos de Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCategoria", "Categoria")">Crear Categoría</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarCategorias", "Categoria")">Listar Categorías</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearTransaccion", "Transaccion")">Crear Transacción</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarTransacciones", "Transaccion")">Listar Transacciones</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-container">
+                    <h2 class="text-center mb-4">Crear Nueva Transacción</h2>
+
+                    @using (Html.BeginForm("CrearTransaccion", "Transaccion", FormMethod.Post, new { id = "transaccionForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.FechaTransaccion, "Fecha de la Transacción")
+                            @Html.TextBoxFor(model => model.FechaTransaccion, new { @class = "form-control", type = "date" })
+                            @Html.ValidationMessageFor(model => model.FechaTransaccion, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Monto, "Monto")
+                            @Html.TextBoxFor(model => model.Monto, new { @class = "form-control", type = "number", step = "0.01" })
+                            @Html.ValidationMessageFor(model => model.Monto, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.TipoOperacionesId, "Tipo de Operación")
+                            @Html.EnumDropDownListFor(model => model.TipoOperacionesId, new { @class = "form-control", id = "TipoOperacion" })
+                            @Html.ValidationMessageFor(model => model.TipoOperacionesId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CategoriaId, "Categoría")
+                            @Html.DropDownListFor(model => model.CategoriaId, new SelectList(ViewBag.Categorias, "Id", "Nombre"), "Seleccione una categoría", new { @class = "form-control", id = "Categoria" })
+                            @Html.ValidationMessageFor(model => model.CategoriaId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CuentasId, "Cuenta")
+                            @Html.DropDownListFor(model => model.CuentasId, new SelectList(ViewBag.Cuentas, "Id", "Nombre"), "Seleccione una cuenta", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.CuentasId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Nota, "Nota")
+                            @Html.TextAreaFor(model => model.Nota, new { @class = "form-control", rows = 4 })
+                            @Html.ValidationMessageFor(model => model.Nota, "", new { @class = "text-danger" })
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Crear</button>
+                        <a href="@Url.Action("ListarTransacciones", "Transaccion")" class="btn btn-secondary btn-block">Cancelar</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#TipoOperacion').change(function () {
+                var tipoOperacionId = $(this).val();
+                if (tipoOperacionId) {
+                    $.ajax({
+                        url: '@Url.Action("ObtenerCategoriasPorTipoOperacion", "Transaccion")',
+                        type: 'GET',
+                        data: { tipoOperacionId: tipoOperacionId },
+                        success: function (data) {
+                            var $categoria = $('#Categoria');
+                            $categoria.empty();
+                            $categoria.append($('<option>', { value: '', text: 'Seleccione una categoría' }));
+                            $.each(data, function (i, categoria) {
+                                $categoria.append($('<option>', { value: categoria.Id, text: categoria.Nombre }));
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'No se pudieron cargar las categorías.',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                } else {
+                    $('#Categoria').empty();
+                    $('#Categoria').append($('<option>', { value: '', text: 'Seleccione una categoría' }));
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Mostrar alerta de éxito después de la creación exitosa
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Transacción Creada',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
+            </text>
+        }
+
+        // Mostrar alerta de error si ocurre un problema
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonText: 'OK'
+                });
+            </text>
+        }
+    </script>
+</body>
+</html>

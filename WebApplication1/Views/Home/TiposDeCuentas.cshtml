@@ -1,0 +1,300 @@
+﻿@model WebApplication1.Models.TiposCuentas
+
+@{
+    ViewBag.Title = "Tipos de Cuentas";
+    var tiposCuentasList = ViewBag.TiposCuentas as IEnumerable<WebApplication1.Models.TiposCuentas>;
+    var tipoCuentaParaActualizar = ViewBag.TipoCuentaParaActualizar as WebApplication1.Models.TiposCuentas;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Custom styles for a professional look -->
+    <style>
+        body {
+            background-color: #f7f8fa;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Gestión Empresarial</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")"><i class='fas fa-home'></i> Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Cuentas", "Cuentas")">Cuentas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCuentas", "Cuentas")">Crear Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("TiposDeCuentas", "Home")">Crear Tipos de Cuenta</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("CrearCategoria", "Categoria")">Crear Categoría</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarCategorias", "Categoria")">Listar Categorías</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("ListarTransacciones", "Transaccion")">Listar Transacciones</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Tipos de Cuentas</h2>
+
+        <!-- Formulario para agregar un nuevo tipo de cuenta -->
+        @using (Html.BeginForm("TiposDeCuentas", "Home", FormMethod.Post))
+        {
+            <div class="card">
+                <a href="@Url.Action("Cuentas", "Cuentas")" class="btn btn-primary mb-3">Ver Cuentas</a>
+                <div class="card-header">
+                    <h4 class="card-title">Agregar Nuevo Tipo de Cuenta</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Nombre, "Nombre de la Cuenta", new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", placeholder = "Ingrese el nombre de la cuenta", @id = "NombreCuenta" })
+                        @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Orden, "Orden de la Cuenta", new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Orden, new { @class = "form-control", placeholder = "Ingrese el Orden de la cuenta" })
+                        @Html.ValidationMessageFor(model => model.Orden, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Formulario para actualizar un tipo de cuenta -->
+        @if (tipoCuentaParaActualizar != null)
+        {
+            <form action="@Url.Action("ActualizarCuenta", "Home")" method="post">
+                @Html.AntiForgeryToken()
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="card-title">Actualizar Tipo de Cuenta</h4>
+                    </div>
+                    <div class="card-body">
+                        @Html.Hidden("Id", tipoCuentaParaActualizar.Id)
+
+                        <div class="form-group">
+                            @Html.Label("Nombre", "Nombre de la Cuenta", new { @class = "form-label" })
+                            @Html.TextBox("Nombre", tipoCuentaParaActualizar.Nombre, new { @class = "form-control", placeholder = "Ingrese el nombre de la cuenta" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Orden", "Orden de la Cuenta", new { @class = "form-label" })
+                            @Html.TextBox("Orden", tipoCuentaParaActualizar.Orden, new { @class = "form-control", placeholder = "Ingrese el Orden de la cuenta" })
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Actualizar</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        }
+
+        <!-- Mostrar la lista de tipos de cuentas -->
+        @if (tiposCuentasList != null && tiposCuentasList.Any())
+        {
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4 class="card-title">Lista de Tipos de Cuentas</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nombre</th>
+                                <th>UsuarioId</th>
+                                <th>Orden</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sortable">
+                            @foreach (var tipoCuenta in tiposCuentasList)
+                            {
+                                <tr draggable="true" ondragstart="dragStart(event)" ondragover="allowDrop(event)" ondrop="dropRow(event)" data-id="@tipoCuenta.Id" data-orden="@tipoCuenta.Orden">
+
+                                    <td class="drag-handle"> <i class="fas fa-grip-vertical"></i>  @tipoCuenta.Id</td>
+                                    <td>@tipoCuenta.Nombre</td>
+                                    <td>@tipoCuenta.UsuarioId</td>
+                                    <td class="orden">@tipoCuenta.Orden</td>
+                                    <td>
+                                        <a href="@Url.Action("EditarCuenta", "Home", new { id = tipoCuenta.Id })" class="btn btn-warning btn-sm">Editar</a>
+                                        @using (Html.BeginForm("EliminarCuenta", "Home", FormMethod.Post, new { @class = "delete-form" }))
+                                        {
+                                            @Html.Hidden("id", tipoCuenta.Id)
+                                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+
+</body>
+</html>
+
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        var draggedRow = null;
+
+        function dragStart(event) {
+            draggedRow = event.target; // Asigna la fila que se está arrastrando
+        }
+
+        function allowDrop(event) {
+            event.preventDefault(); // Permite el "drop"
+        }
+
+        function dropRow(event) {
+            event.preventDefault();
+
+            // Inserta la fila arrastrada antes de la fila sobre la que se soltó
+            if (event.target.tagName === 'TD') {
+                let targetRow = event.target.closest('tr');
+                targetRow.parentNode.insertBefore(draggedRow, targetRow.nextSibling);
+
+                // Lógica para manejar el orden actualizado
+                updateOrder();
+            }
+        }
+
+       function updateOrder() {
+    let rows = document.querySelectorAll('#sortable tr');
+    let order = [];
+
+    rows.forEach((row, index) => {
+        let id = row.getAttribute('data-id');
+        order.push({ id: id, orden: index + 1 });
+        // Actualiza visualmente el nuevo orden
+        row.querySelector('.orden').innerText = index + 1;
+    });
+
+    console.log(order);
+
+    // Aquí podrías hacer una llamada AJAX al backend para actualizar el orden en la base de datos.
+    $.ajax({
+        url: '@Url.Action("ActualizarOrden", "Home")', // Cambia a la acción que maneje la actualización en tu backend
+        method: 'POST',
+        data: JSON.stringify(order),
+        contentType: 'application/json',
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: response.message,
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message,
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(error) {
+            console.error('Error al actualizar el orden:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al actualizar el orden',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+        // Mostrar mensajes de éxito o error en el inicio
+        $(document).ready(function() {
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: successMessage,
+                    confirmButtonText: 'OK'
+                });
+            }
+
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage,
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    </script>
+
+}
